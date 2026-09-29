@@ -14,3 +14,23 @@ export function sourceLabel(url) {
 export function isLinkOnly(r) {
   return !!r.sourceUrl && !(r.ingredients?.length) && !(r.steps?.length)
 }
+
+export function isYouTube(url) {
+  return url.includes('youtube.com') || url.includes('youtu.be')
+}
+
+export function youtubeEmbedUrl(url) {
+  try {
+    const u = new URL(url)
+    let id = null
+    if (u.hostname.includes('youtu.be')) {
+      id = u.pathname.slice(1).split('/')[0]
+    } else if (u.searchParams.get('v')) {
+      id = u.searchParams.get('v')
+    } else {
+      const match = u.pathname.match(/\/(shorts|embed|live)\/([^/?]+)/)
+      if (match) id = match[2]
+    }
+    return id ? `https://www.youtube.com/embed/${id}` : null
+  } catch { return null }
+}
