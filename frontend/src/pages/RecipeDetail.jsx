@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../contexts/AuthContext'
-import { hostnameOf, sourceLabel } from '../utils/sourceLink'
+import { hostnameOf, sourceLabel, isYouTube, youtubeEmbedUrl } from '../utils/sourceLink'
 import styles from './RecipeDetail.module.css'
 
 export default function RecipeDetail() {
@@ -102,11 +102,22 @@ export default function RecipeDetail() {
           </div>
 
           {recipe.sourceUrl && (
-            <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" className={styles.sourceLinkCard}>
-              <span>{sourceLabel(recipe.sourceUrl)}</span>
-              <span className={styles.sourceDomain}>{hostnameOf(recipe.sourceUrl)}</span>
-              <span>원문 보러가기 →</span>
-            </a>
+            isYouTube(recipe.sourceUrl) && youtubeEmbedUrl(recipe.sourceUrl) ? (
+              <iframe
+                src={youtubeEmbedUrl(recipe.sourceUrl)}
+                width="100%"
+                height="400"
+                allowFullScreen
+                style={{ border: 'none', borderRadius: '8px', marginBottom: '12px' }}
+                title="YouTube 영상"
+              />
+            ) : (
+              <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" className={styles.sourceLinkCard}>
+                <span>{sourceLabel(recipe.sourceUrl)}</span>
+                <span className={styles.sourceDomain}>{hostnameOf(recipe.sourceUrl)}</span>
+                <span>원문 보러가기 →</span>
+              </a>
+            )
           )}
 
           <p className={styles.desc}>{recipe.description}</p>
